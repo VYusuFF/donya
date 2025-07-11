@@ -45,6 +45,8 @@ INSTALLED_APPS = [
 
     # installed packages
     'parler',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

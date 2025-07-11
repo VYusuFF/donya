@@ -1,3 +1,5 @@
 django
 python-decouple
 pillow
+djangorestframework
+drf-yasg
