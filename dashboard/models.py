@@ -29,16 +29,10 @@ class Product(TranslatableModel):
     )
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     image = models.ImageField(upload_to='products/')
+    gramm = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
-    
-class ProductWeight(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='weights')
-    gramm = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.product.name} - {self.gramm}g"
 
 class Certification(models.Model):
     image = models.FileField(

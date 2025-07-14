@@ -4,11 +4,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Category, Product, ProductWeight, Certification, Contact
+from .models import Category, Product, Certification, Contact
 from .serializers import (
     CategorySerializer,
     ProductSerializer,
-    ProductWeightSerializer,
     CertificationSerializer,
     ContactSerializer
 )
@@ -22,19 +21,11 @@ class CategoryListAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ProductListAPIView(APIView):
-    def get(self, request):
-        queryset = Product.objects.all()
+    def get(self, request, category_id):
+        queryset = Product.objects.filter(category__id=category_id)
         if not queryset.exists():
-            return Response({'message': 'No products found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'No products found for this category id'}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProductSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class ProductWeightListAPIView(APIView):
-    def get(self, request):
-        queryset = ProductWeight.objects.all()
-        if not queryset.exists():
-            return Response({'message': 'No product weights found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = ProductWeightSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CertificationListAPIView(APIView):

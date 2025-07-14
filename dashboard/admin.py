@@ -1,7 +1,7 @@
 from django.contrib import admin
 from parler.admin import TranslatableAdmin
 from django.utils.html import format_html
-from .models import Category, Product, ProductWeight, Certification, Contact
+from .models import Category, Product, Certification, Contact
 # Register your models here.
 
 @admin.register(Category)
@@ -12,7 +12,7 @@ class CategoryAdmin(TranslatableAdmin):
 
 @admin.register(Product)
 class ProductAdmin(TranslatableAdmin):
-    list_display = ('name', 'category', 'image_tag')
+    list_display = ('name', 'category', 'gramm', 'image_tag')
     search_fields = ('name', 'category__name')
     list_filter = ('category',)
 
@@ -24,11 +24,6 @@ class ProductAdmin(TranslatableAdmin):
             )
         return "-"
     image_tag.short_description = 'Image'
-
-@admin.register(ProductWeight)
-class ProductWeightAdmin(admin.ModelAdmin):
-    list_display = ('product', 'gramm')
-    search_fields = ('product__name',)
 
 @admin.register(Certification)
 class CertificationAdmin(admin.ModelAdmin):
