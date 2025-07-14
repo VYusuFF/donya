@@ -1,20 +1,34 @@
 from django.contrib import admin
+from django import forms
 from parler.admin import TranslatableAdmin
 from django.utils.html import format_html
 from .models import Category, Product, Certification, Contact
 # Register your models here.
 
+class CategoryAdminForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['parent'].queryset = Category.objects.exclude(pk=self.instance.pk)
+
 @admin.register(Category)
 class CategoryAdmin(TranslatableAdmin):
-    list_display = ('name', 'slug', 'parent')
+    form = CategoryAdminForm
+    list_display = ('name', 'slug', 'parent', 'created_at', 'updated_at')
     search_fields = ('name',)
     list_filter = ('parent',)
+    readonly_fields = ('created_at', 'updated_at')
 
 @admin.register(Product)
 class ProductAdmin(TranslatableAdmin):
-    list_display = ('name', 'category', 'gramm', 'image_tag')
+    list_display = ('name', 'category', 'gramm', 'image_tag', 'created_at', 'updated_at')
     search_fields = ('name', 'category__name')
     list_filter = ('category',)
+    readonly_fields = ('created_at', 'updated_at')
 
     def image_tag(self, obj):
         if obj.image:
