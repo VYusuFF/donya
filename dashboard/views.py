@@ -35,6 +35,19 @@ class ChildCategoryListAPIView(APIView):
             return Response({'message': 'No child categories found for this parent id'}, status=status.HTTP_404_NOT_FOUND)
         serializer = CategorySerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class ParentCategoryProductListAPIView(APIView):
+    def get(self, request, parent_id):
+        child_categories = Category.objects.filter(parent__id=parent_id)
+        if not child_categories.exists():
+            return Response({'message': 'No child categories found for this parent id'}, status=status.HTTP_404_NOT_FOUND)
+
+        products = Product.objects.filter(category__in=child_categories)
+        if not products.exists():
+            return Response({'message': 'No products found for this parent category'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(products, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CertificationListAPIView(APIView):
     def get(self, request):
