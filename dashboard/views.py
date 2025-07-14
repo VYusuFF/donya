@@ -11,22 +11,22 @@ from .serializers import (
     ContactSerializer
 )
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-class ProductWeightViewSet(viewsets.ModelViewSet):
+class ProductWeightViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ProductWeight.objects.all()
     serializer_class = ProductWeightSerializer
 
-class CertificationViewSet(viewsets.ModelViewSet):
+class CertificationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Certification.objects.all()
     serializer_class = CertificationSerializer
 
-class ContactViewSet(viewsets.ModelViewSet):
+class ContactViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
