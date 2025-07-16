@@ -1,14 +1,14 @@
 from django.contrib import admin
-from django import forms
+from parler.forms import TranslatableModelForm
 from parler.admin import TranslatableAdmin
 from django.utils.html import format_html
 from .models import Category, Product, Certification, Contact
 # Register your models here.
 
-class CategoryAdminForm(forms.ModelForm):
+class CategoryAdminForm(TranslatableModelForm):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['name', 'slug', 'parent']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,8 +41,8 @@ class ProductAdmin(TranslatableAdmin):
 
 @admin.register(Certification)
 class CertificationAdmin(admin.ModelAdmin):
-    list_display = ('image_tag', 'document')
-    search_fields = ('image', 'document')
+    list_display = ('image_tag',)
+    search_fields = ('image',)
 
     def image_tag(self, obj):
         if obj.image:
@@ -54,7 +54,7 @@ class CertificationAdmin(admin.ModelAdmin):
     image_tag.short_description = 'Image'
 
 @admin.register(Contact)
-class ContactAdmin(admin.ModelAdmin):
+class ContactAdmin(TranslatableAdmin):
     list_display = ('address', 'phone1', 'phone2', 'fax', 'email1', 'email2')
     search_fields = ('address', 'phone1', 'phone2', 'email1', 'email2')
     fieldsets = (
