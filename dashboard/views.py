@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,13 +9,16 @@ from .serializers import (
     ContactSerializer
 )
 
+
 class CategoryListAPIView(APIView):
     def get(self, request):
-        queryset = Category.objects.all()
+        parent_ids = Category.objects.filter(parents__isnull=False).values_list('parents', flat=True).distinct()
+        queryset = Category.objects.exclude(id__in=parent_ids)
         if not queryset.exists():
             return Response({'message': 'No categories found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = CategorySerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ProductListAPIView(APIView):
     def get(self, request, category_id):
@@ -27,14 +27,7 @@ class ProductListAPIView(APIView):
             return Response({'message': 'No products found for this category id'}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProductSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class ChildCategoryListAPIView(APIView):
-    def get(self, request, parent_id):
-        queryset = Category.objects.filter(parents__id=parent_id)
-        if not queryset.exists():
-            return Response({'message': 'No child categories found for this parent id'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = CategorySerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class CertificationListAPIView(APIView):
     def get(self, request):
@@ -43,6 +36,18 @@ class CertificationListAPIView(APIView):
             return Response({'message': 'No certifications found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = CertificationSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CertificationDetailAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            certification = Certification.objects.get(pk=pk)
+        except Certification.DoesNotExist:
+            return Response({'message': 'Certification not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CertificationSerializer(certification, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ContactListAPIView(APIView):
     def get(self, request):

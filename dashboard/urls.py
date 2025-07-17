@@ -4,13 +4,13 @@ from .views import (
     ProductListAPIView,
     CertificationListAPIView,
     ContactListAPIView,
-    ChildCategoryListAPIView,
+    CertificationDetailAPIView,
 )
 
 urlpatterns = [
     path('api/categories/', CategoryListAPIView.as_view(), name='category-list'),
-    path('api/categories/<int:parent_id>/', ChildCategoryListAPIView.as_view(), name='child-category-list'),
     path('api/products/<int:category_id>/', ProductListAPIView.as_view(), name='product-list'),
     path('api/certifications/', CertificationListAPIView.as_view(), name='certification-list'),
+    path('api/certifications/<int:pk>/', CertificationDetailAPIView.as_view(), name='certification-detail'),
     path('api/contacts/', ContactListAPIView.as_view(), name='contact-list'),
 ]
