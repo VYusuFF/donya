@@ -2,10 +2,26 @@ from rest_framework import serializers
 from .models import Category, Product, Certification, Contact
 
 class CategorySerializer(serializers.ModelSerializer):
+    parents = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'parent', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'slug', 'parents', 'created_at', 'updated_at']
         read_only_fields = ['id', 'slug', 'created_at', 'updated_at']
+
+    def get_parents(self, obj):
+        return [
+            {
+                "id": parent.id,
+                "name": parent.name,
+                "slug": parent.slug,
+                "parents": None,
+                "created_at": parent.created_at,
+                "updated_at": parent.updated_at,
+            }
+            for parent in obj.parents.all()
+        ]
+
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,7 +32,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class CertificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Certification
-        fields = ['id', 'image', 'document']
+        fields = ['id', 'image']
         read_only_fields = ['id']
 
 class ContactSerializer(serializers.ModelSerializer):

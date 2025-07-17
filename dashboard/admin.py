@@ -8,20 +8,25 @@ from .models import Category, Product, Certification, Contact
 class CategoryAdminForm(TranslatableModelForm):
     class Meta:
         model = Category
-        fields = ['name', 'slug', 'parent']
+        fields = ['name', 'slug', 'parents']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            self.fields['parent'].queryset = Category.objects.exclude(pk=self.instance.pk)
+            self.fields['parents'].queryset = Category.objects.exclude(pk=self.instance.pk)
 
 @admin.register(Category)
 class CategoryAdmin(TranslatableAdmin):
     form = CategoryAdminForm
-    list_display = ('name', 'slug', 'parent', 'created_at', 'updated_at')
+    list_display = ('name', 'slug', 'get_parents', 'created_at', 'updated_at')
     search_fields = ('name',)
-    list_filter = ('parent',)
+    list_filter = ('parents',)
     readonly_fields = ('created_at', 'updated_at')
+    filter_horizontal = ('parents',)
+
+    def get_parents(self, obj):
+        return ", ".join([str(parent.name) for parent in obj.parents.all()])
+    get_parents.short_description = 'Parents'
 
 @admin.register(Product)
 class ProductAdmin(TranslatableAdmin):
@@ -41,8 +46,8 @@ class ProductAdmin(TranslatableAdmin):
 
 @admin.register(Certification)
 class CertificationAdmin(admin.ModelAdmin):
-    list_display = ('image_tag',)
-    search_fields = ('image',)
+    list_display = ('id', 'image_tag')
+    search_fields = ('id', 'image')
 
     def image_tag(self, obj):
         if obj.image:

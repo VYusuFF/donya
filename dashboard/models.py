@@ -17,7 +17,7 @@ class Category(TranslatableModel):
         name = models.CharField(max_length=200)
     )
     slug = models.SlugField(unique=True, blank=True)
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='children', null=True,blank=True)
+    parents = models.ManyToManyField('self', symmetrical=False, related_name='children', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
